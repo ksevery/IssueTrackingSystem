@@ -10,6 +10,5 @@ angular.module('issueTrackingSystem.common.main', [])
             
             $scope.logout = function(){
                 authentication.logout(sessionStorage);
-                $scope.apply();
-            }
+            };
     }])

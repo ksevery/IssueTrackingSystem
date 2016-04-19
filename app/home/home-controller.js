@@ -18,12 +18,22 @@ angular.module('issueTrackingSystem.home', [])
 
             $scope.loginUser = function (user) {
                 var loginUser = 'grant_type=password&Username=' + user.Username + '&Password=' + user.Password;
-                
-                console.log(loginUser);
 
                 authentication.loginUser(loginUser)
                     .then(function(data){
                         sessionStorage['access-token'] = data.access_token;
                     });
-            }
+            };
+            
+            $scope.register = function(registerUser){
+                authentication.registerUser(registerUser)
+                    .then(function(){
+                        var loginUser = {
+                            Username: registerUser.Email,
+                            Password: registerUser.Password
+                        };
+                        
+                        $scope.loginUser(loginUser);
+                    });
+            };
         }])
