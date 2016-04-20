@@ -5,10 +5,10 @@ angular.module('issueTrackingSystem.common.main', [])
         'authentication',
         function($scope, identity, authentication){
             $scope.isAuthenticated = function () {
-                return identity.isAuthenticated(sessionStorage);
+                return identity.isAuthenticated();
             };
             
             $scope.logout = function(){
-                authentication.logout(sessionStorage);
+                authentication.logout();
             };
     }])

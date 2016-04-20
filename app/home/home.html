@@ -1,5 +1,5 @@
-<div class="row" ng-if="!isLogged()">
-    <div class="col-md-3 col-md-offset-2 border-box">
+<div class="row" ng-if="!isAuthenticated()">
+    <div class="col-md-4 col-md-offset-1 border-box">
         <h3 class="text-center">Login</h3>
         <form name="userLoginForm">
             <div class="form-group">
@@ -15,7 +15,7 @@
             </div>
         </form>
     </div>
-    <div class="col-md-3 col-md-offset-1 border-box">
+    <div class="col-md-4 col-md-offset-1 border-box">
         <h3 class="text-center">Register</h3>
         <form name="userRegistrationForm">
             <div class="form-group">
@@ -37,8 +37,35 @@
     </div>
 </div>
 
-<div class="row" ng-if="isLogged()">
-    <div class="col-md-10 col-md-offset-1">
-        <h2 class="text-center">Welcome to the user dashboard!</h2>
+<div class="row" ng-if="isAuthenticated()">
+    <div class="col-md-6 border-box">
+        <h3 class="text-center">Issues</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Project</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="issue in userIssues">
+                    <td><a href="#/issues/{{issue.Id}}">{{issue.Title}}</a></td>
+                    <td>{{issue.Description | limitTo: 20: begin}}</td>
+                    <td><a href="#/projects/{{issue.Project.Id}}">{{issue.Project.Name}}</a></td>
+                    <td>{{issue.DueDate}}</td>
+                    <td>{{issue.Status.Name}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div uib-pagination total-items="totalItems" ng-model="pagination.currentPage" ng-change="pageChanged()" maxSize="maxSize"></div>
+    </div>
+    <div class="col-md-5 col-md-offset-1 border-box">
+        <h3 class="text-center">Affiliated Projects</h3>
+        <div class="list-group">
+            <a class="list-group-item" ng-repeat="project in projects" href="#/projects/{{project.Id}}">{{project.Name}}</a>
+        </div>
     </div>
 </div>

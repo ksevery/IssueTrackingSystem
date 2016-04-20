@@ -3,7 +3,8 @@ angular.module('issueTrackingSystem.users.authentication', [])
         '$http',
         '$q',
         'BASE_URL',
-        function($http, $q, BASE_URL){
+        'projectSessionStorage',
+        function($http, $q, BASE_URL, projectSessionStorage){
             function registerUser(userRegisterData) {
                 var deferred = $q.defer();
                 
@@ -26,8 +27,8 @@ angular.module('issueTrackingSystem.users.authentication', [])
                 return deferred.promise;
             }
             
-            function logout(sessionStorage) {
-                delete sessionStorage['access-token'];
+            function logout() {
+                projectSessionStorage.deleteItem('access-token');
             }
             
             return {

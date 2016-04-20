@@ -1,8 +1,9 @@
 angular.module('issueTrackingSystem.users.identity', [])
     .factory('identity', [
-        function () {
-            function isAuthenticated(sessionStorage) {
-                if(sessionStorage['access-token']){
+        'projectSessionStorage',
+        function (projectSessionStorage) {
+            function isAuthenticated() {
+                if(projectSessionStorage.get('access-token')){
                     return true;
                 }
                 
