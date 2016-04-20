@@ -10,6 +10,8 @@ angular.module('issueTrackingSystem', [
   'issueTrackingSystem.common.sessionStorage',
   'issueTrackingSystem.users.authentication',
   'issueTrackingSystem.users.identity',
+  'issueTrackingSystem.users.changePassword',
+  'issueTrackingSystem.users.logout',
   'issueTrackingSystem.issues'
 ]).
 config(['$routeProvider', function($routeProvider) {

@@ -1,7 +1,6 @@
 angular.module('issueTrackingSystem.common.sessionStorage', [])
     .factory('projectSessionStorage', [
         function () {
-            
             function get(key) {
                 return sessionStorage[key];
             }

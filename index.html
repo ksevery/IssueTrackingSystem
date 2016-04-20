@@ -48,7 +48,7 @@
         </li>-->
       </ul>
       <ul ng-if="isAuthenticated()" class="nav navbar-nav navbar-right">
-        <li><a href="#/" ng-click="logout()">Logout</a></li>
+        <li><a href="#/logout">Logout</a></li>
       </ul>
     </div>
   </div>
@@ -70,15 +70,17 @@
   <script src="app/bower_components/angular-cookies/angular-cookies.js"></script>  
   <script src="app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
   
+  <script src="app/common/main-controller.js"></script>
+  <script src="app/common/session-storage.js"></script>
+  
   <script src="app/home/home-controller.js"></script>
   
   <script src="app/issues/issues.js"></script>
   
   <script src="app/users/authentication.js"></script>
   <script src="app/users/identity.js"></script>
-  
-  <script src="app/common/main-controller.js"></script>
-  <script src="app/common/session-storage.js"></script>
+  <script src="app/users/change-password-controller.js"></script>
+  <script src="app/users/logout-controller.js"></script>
   
   <script src="app/app.js"></script>
   

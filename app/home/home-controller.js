@@ -18,6 +18,7 @@ angular.module('issueTrackingSystem.home', [])
                 authentication.loginUser(loginUser)
                     .then(function (data) {
                         projectSessionStorage.addOrUpdate('access-token', data.access_token);
+                        initProjectsAndIssues();
                     });
             };
 
@@ -48,7 +49,11 @@ angular.module('issueTrackingSystem.home', [])
                     });
             };
 
-            if ($scope.isAuthenticated()) {
+            if($scope.isAuthenticated()){
+                initProjectsAndIssues();
+            }
+
+            function initProjectsAndIssues(){
                 issues.getCurrentUserIssues()
                     .then(function (data) {
                         $scope.userIssues = data.Issues;

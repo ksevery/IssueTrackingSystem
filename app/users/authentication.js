@@ -27,6 +27,21 @@ angular.module('issueTrackingSystem.users.authentication', [])
                 return deferred.promise;
             }
             
+            function changePassword(changedPassword) {
+                var deferred = $q.defer();
+                
+                $http.post(BASE_URL + 'api/Account/ChangePassword', changedPassword, {
+                        headers: {
+                            Authorization: 'Bearer ' + projectSessionStorage.get('access-token')
+                        }
+                    })
+                    .then(function(response){
+                        deferred.resolve(response);
+                    });
+                
+                return deferred.promise;
+            }
+            
             function logout() {
                 projectSessionStorage.deleteItem('access-token');
             }
@@ -34,7 +49,8 @@ angular.module('issueTrackingSystem.users.authentication', [])
             return {
                 registerUser: registerUser,
                 loginUser: loginUser,
-                logout: logout
+                logout: logout,
+                changePassword: changePassword
             }
         }
     ])
