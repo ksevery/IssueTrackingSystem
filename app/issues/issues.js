@@ -1,4 +1,4 @@
-angular.module('issueTrackingSystem.issues', [])
+angular.module('issueTrackingSystem.issuesService', [])
     .factory('issues', [
         '$http',
         '$q',
@@ -27,7 +27,12 @@ angular.module('issueTrackingSystem.issues', [])
                 return deferred.promise;
             }
             
+            function getIssues(pageSize, pageNumber, filter) {
+                
+            }
+            
             return {
-                getCurrentUserIssues: getCurrentUserIssues
+                getCurrentUserIssues: getCurrentUserIssues,
+                getIssues: getIssues
             }
     }])

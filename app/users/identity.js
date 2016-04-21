@@ -10,7 +10,15 @@ angular.module('issueTrackingSystem.users.identity', [])
                 return false;
             }
             
+            function getAccessToken() {
+                return projectSessionStorage.get('access-token');
+            }
+            
             return {
-                isAuthenticated: isAuthenticated
+                isAuthenticated: isAuthenticated,
+                getAccessToken: getAccessToken,
+                getCurrentUser: function(){
+                    return JSON.parse(projectSessionStorage.get('currentUser'));
+                }
             }
         }])

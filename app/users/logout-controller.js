@@ -4,8 +4,9 @@ angular.module('issueTrackingSystem.users.logout', [])
         function ($routeProvider) {
             $routeProvider.when('/logout', {
                 resolve: {
-                    logout: ['$location', 'authentication', function($location, authentication){
+                    logout: ['$location', 'authentication', 'Notification', function($location, authentication, Notification){
                         authentication.logout();
+                        Notification.success('Logout succesfull!');
                         $location.path('/');
                     }]
                 }

@@ -35,7 +35,6 @@ angular.module('issueTrackingSystem.home', [])
             };
             
             $scope.pageChanged = function() {
-                console.log($scope.pagination);
                 issues.getCurrentUserIssues(null, $scope.pagination.currentPage)
                     .then(function (data) {
                         $scope.userIssues = data.Issues;
