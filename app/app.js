@@ -4,6 +4,7 @@
 angular.module('issueTrackingSystem', [
   'ngRoute',
   'ngCookies',
+  'ngMaterial',
   'ui.bootstrap',
   'ui-notification',
   'issueTrackingSystem.home',
