@@ -18,6 +18,7 @@ angular.module('issueTrackingSystem.projects', [])
                     modalInstance.result
                         .then(function (newProject) {
                             console.log(newProject);
+                            $location.path('/');
                         }, function(){
                             $location.path('/');
                         })
@@ -71,17 +72,21 @@ angular.module('issueTrackingSystem.projects', [])
         '$uibModalInstance',
         'users',
         function ($scope, $uibModalInstance, users) {
-            users.getAllUsers()
-                .then(function(users){
-                    $scope.users = users;
-                });
-            
             $scope.ok = function () {
+                $scope.newProject.LeadId = $scope.selectedUser.Id;
+                var name = $scope.newProject.Name;
+                var letters = name.match(/\b(\w)/g); 
+                var projectKey = letters.join('');
+                $scope.newProject.ProjectKey = projectKey;
                 $uibModalInstance.close($scope.newProject);
             };
 
             $scope.cancel = function () {
                 $uibModalInstance.dismiss('cancel');
+            }
+            
+            $scope.searchUsers = function(searchUser) {
+                return users.getUsersByQuery('Username.Contains("' + searchUser + '")');
             }
         }
     ])

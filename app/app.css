@@ -4,3 +4,7 @@
   border-radius: 5px;
   padding: 10px;
 }
+
+.md-virtual-repeat-container.md-autocomplete-suggestions-container {
+  z-index: 9999;
+}

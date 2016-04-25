@@ -20,8 +20,24 @@ angular.module('issueTrackingSystem.users.userService', [])
                 return deferred.promise;
             }
             
+            function getUsersByQuery(queryText) {
+                var deferred = $q.defer();
+                
+                $http.get(BASE_URL + 'Users/?filter=' + queryText, {
+                        headers: {
+                            Authorization: 'Bearer ' + identity.getAccessToken()
+                        }
+                    })
+                    .then(function(response){
+                        deferred.resolve(response.data);
+                    })
+                
+                return deferred.promise;
+            }
+            
             return {
-                getAllUsers: getAllUsers
+                getAllUsers: getAllUsers,
+                getUsersByQuery: getUsersByQuery
             }
         }
     ])
