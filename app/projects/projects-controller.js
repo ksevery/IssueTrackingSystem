@@ -19,7 +19,7 @@ angular.module('issueTrackingSystem.projects', [])
                         .then(function (newProject) {
                             console.log(newProject);
                             $location.path('/');
-                        }, function(){
+                        }, function () {
                             $location.path('/');
                         })
                 }]
@@ -71,22 +71,47 @@ angular.module('issueTrackingSystem.projects', [])
         '$scope',
         '$uibModalInstance',
         'users',
-        function ($scope, $uibModalInstance, users) {
+        'labels',
+        function ($scope, $uibModalInstance, users, labels) {
+            $scope.selectedLabels = [];
+            $scope.selectedPriorities = [];
+            
             $scope.ok = function () {
                 $scope.newProject.LeadId = $scope.selectedUser.Id;
                 var name = $scope.newProject.Name;
-                var letters = name.match(/\b(\w)/g); 
+                var letters = name.match(/\b(\w)/g);
                 var projectKey = letters.join('');
                 $scope.newProject.ProjectKey = projectKey;
+                if($scope.selectedLabels.length > 0){
+                       $scope.newProject.Labels = $scope.selectedLabels.map(function(item){
+                           return { Name: item.Name };
+                       });
+                }
+                
+                $scope.newProject.Priorities = $scope.selectedPriorities;
+                
                 $uibModalInstance.close($scope.newProject);
             };
 
             $scope.cancel = function () {
                 $uibModalInstance.dismiss('cancel');
             }
-            
-            $scope.searchUsers = function(searchUser) {
+
+            $scope.searchUsers = function (searchUser) {
                 return users.getUsersByQuery('Username.Contains("' + searchUser + '")');
+            }
+
+            $scope.transformChip = function (chip) {
+                // If it is an object, it's already a known chip
+                if (angular.isObject(chip)) {
+                    return chip;
+                }
+                // Otherwise, create a new one
+                return { Name: chip }
+            }
+            
+            $scope.searchLabels = function(searchLabel){
+                return labels.getLabelsByName(searchLabel);
             }
         }
     ])

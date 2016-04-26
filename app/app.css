@@ -1,8 +1,16 @@
 /* app css stylesheet */
+textarea {
+  resize: none;
+}
+
 .border-box{
   border: 1px solid black;
   border-radius: 5px;
   padding: 10px;
+}
+
+.form-container {
+  padding: 1em;
 }
 
 .md-virtual-repeat-container.md-autocomplete-suggestions-container {
