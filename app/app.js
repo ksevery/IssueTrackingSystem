@@ -24,4 +24,5 @@ config(['$routeProvider', function($routeProvider) {
   $routeProvider.otherwise({redirectTo: '/'});
 }])
 .constant('BASE_URL', 'http://softuni-issue-tracker.azurewebsites.net/')
-.constant('BASE_PAGE_SIZE', 10);
+.constant('BASE_PAGE_SIZE', 10)
+.constant('EMAIL_VALIDATOR', /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i);

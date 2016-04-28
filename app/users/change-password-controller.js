@@ -20,7 +20,6 @@ angular.module('issueTrackingSystem.users.changePassword', [])
         'Notification',
         function($scope, authentication, Notification){
             $scope.changePassword = function(changedPassword){
-                console.log('Changed password to ' + changedPassword);
                 authentication.changePassword(changedPassword)
                     .then(function(){
                         Notification.success('Password changed succesfully!');

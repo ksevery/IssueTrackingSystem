@@ -3,8 +3,8 @@
     <form name="newProjectForm"> 
         <div class="form-group">
             <label for="leader">*Leader: </label>
-            <md-autocomplete  md-selected-item="selectedUser" md-search-text="searchUser" md-min-length="2" md-items="item in searchUsers(searchUser)"
-                md-item-text="item.Username" placeholder="Start typing a username, autocomplete after 2 letters are typed.">
+            <md-autocomplete type="email" md-selected-item="selectedUser" md-search-text="searchUser" md-min-length="2" md-items="item in searchUsers(searchUser)"
+                md-item-text="item.Username" placeholder="Start typing a username, autocomplete after 2 letters are typed." required="required">
                 <span>{{item.Username}}</span>
             </md-autocomplete>
         </div>
@@ -18,7 +18,7 @@
         </div>
         <div class="form-group">
             <label for="labels">Labels: </label>
-            <md-chips ng-model="selectedLabels" md-autocomplete-snap md-transform-chip="transformChip($chip)" md-require-match="false">
+            <md-chips ng-model="selectedLabels" md-autocomplete-snap md-transform-chip="transformChip($chip)" md-require-match="false" md-separator-keys="[32]">
                 <md-autocomplete  md-selected-item="selectedLabel" md-search-text="searchLabel" md-items="item in searchLabels(searchLabel)"
                     md-item-text="item.Name" placeholder="Search for a label or add a new one">
                     <span>{{item.Name}}</span>
@@ -32,7 +32,7 @@
         </div>
         <div class="form-group">
             <label for="priorities">*Priorities: </label>
-            <md-chips ng-model="selectedPriorities" md-transform-chip="transformChip($chip)" md-require-match="false" required="required">
+            <md-chips ng-model="selectedPriorities" md-transform-chip="transformChip($chip)" md-require-match="false" required="required" md-separator-keys="[32]">
                 <md-chip-template>
                     <span>
                         <strong>{{$chip.Name}}</strong>
@@ -40,7 +40,7 @@
                 </md-chip-template></md-chips>
         </div>
         <div class="form-group">
-            <button class="btn btn-success" ng-disabled="newProjectForm.$invalid" ng-click="ok()">Create</button>
+            <button class="btn btn-success" ng-disabled="newProjectForm.$invalid || !validateMdElements()" ng-click="ok()">Create</button>
             <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
         </div>
     </form>

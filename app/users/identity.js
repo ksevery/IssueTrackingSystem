@@ -18,7 +18,7 @@ angular.module('issueTrackingSystem.users.identity', [])
                 isAuthenticated: isAuthenticated,
                 getAccessToken: getAccessToken,
                 getCurrentUser: function(){
-                    return JSON.parse(projectSessionStorage.get('currentUser'));
+                    return JSON.parse(projectSessionStorage.get('current-user'));
                 }
             }
         }])

@@ -8,7 +8,7 @@ angular.module('issueTrackingSystem.projects', [])
                         $location.path('/');
                     }
                 }],
-                showModal: ['$uibModal', '$location', function ($uibModal, $location) {
+                showModal: ['$uibModal', '$location', 'Notification', 'projects', function ($uibModal, $location, Notification, projects) {
                     var modalInstance = $uibModal.open({
                         animation: true,
                         templateUrl: 'app/projects/project-add-modal.html',
@@ -17,8 +17,13 @@ angular.module('issueTrackingSystem.projects', [])
 
                     modalInstance.result
                         .then(function (newProject) {
-                            console.log(newProject);
-                            $location.path('/');
+                            projects.createNewProject(newProject)
+                                .then(function(data){
+                                    Notification.success('Project ' + newProject.Name + ' created!');
+                                    $location.path('/projects/' + data.Id);
+                                }, function(error){
+                                    console.log(error);
+                                });
                         }, function () {
                             $location.path('/');
                         })
@@ -72,7 +77,8 @@ angular.module('issueTrackingSystem.projects', [])
         '$uibModalInstance',
         'users',
         'labels',
-        function ($scope, $uibModalInstance, users, labels) {
+        'EMAIL_VALIDATOR',
+        function ($scope, $uibModalInstance, users, labels, EMAIL_VALIDATOR) {
             $scope.selectedLabels = [];
             $scope.selectedPriorities = [];
             
@@ -87,6 +93,8 @@ angular.module('issueTrackingSystem.projects', [])
                            return { Name: item.Name };
                        });
                 }
+                
+                
                 
                 $scope.newProject.Priorities = $scope.selectedPriorities;
                 
@@ -112,6 +120,22 @@ angular.module('issueTrackingSystem.projects', [])
             
             $scope.searchLabels = function(searchLabel){
                 return labels.getLabelsByName(searchLabel);
+            }
+            
+            $scope.validateMdElements = function(){
+                var priorities = $scope.selectedPriorities;
+                var user = $scope.selectedUser;
+                
+                if(priorities.length <= 0){
+                    return false;
+                }
+                
+                if(!user || !user.Username.match(EMAIL_VALIDATOR)){
+                    return false;
+                }
+                
+                
+                return true;
             }
         }
     ])

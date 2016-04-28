@@ -38,10 +38,28 @@ angular.module('issueTrackingSystem.projects.projectsService', [])
 
                 return deferred.promise;
             }
+            
+            function createNewProject(newProject) {
+                var deferred = $q.defer();
+                
+                $http.post(BASE_URL + 'projects', newProject, {
+                            headers: {
+                                        Authorization: 'Bearer ' + identity.getAccessToken()
+                                    }
+                        })
+                    .then(function(response){
+                        deferred.resolve(response.data);
+                    }, function(error){
+                        deferred.reject(error);
+                    });
+                
+                return deferred.promise;
+            }
 
             return {
                 getProject: getProject,
-                getProjectIssues: getProjectIssues
+                getProjectIssues: getProjectIssues,
+                createNewProject: createNewProject
             }
         }
     ])

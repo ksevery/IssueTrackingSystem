@@ -27,7 +27,7 @@ angular.module('issueTrackingSystem.users.authentication', [])
                     .then(function(){
                         getUser()
                             .then(function(user){
-                                projectSessionStorage.addOrUpdate('currentUser', JSON.stringify(user));                               
+                                projectSessionStorage.addOrUpdate('current-user', JSON.stringify(user));                               
                             })
                     });
 

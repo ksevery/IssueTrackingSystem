@@ -10,7 +10,10 @@ angular.module('issueTrackingSystem.common.main', [])
             
             $scope.isAdmin = function(){
                 if(identity.isAuthenticated()){
-                    return identity.getCurrentUser().isAdmin
+                    var currentUser = identity.getCurrentUser();
+                    if(currentUser){
+                        return currentUser.isAdmin;
+                    }
                 }
                 
                 return false;
