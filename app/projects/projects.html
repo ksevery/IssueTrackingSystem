@@ -1,0 +1,19 @@
+<div class="row">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Project Lead</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="project in allProjects" ng-click="goToProject(project.Id)">
+                <td>{{project.Name}}</td>
+                <td>{{project.Description | limitTo: 20: begin}}</td>
+                <td>{{project.Lead.Username}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div uib-pagination total-items="totalItems" ng-model="pagination.currentPage" ng-change="pageChanged()" maxSize="maxSize"></div>
+</div>

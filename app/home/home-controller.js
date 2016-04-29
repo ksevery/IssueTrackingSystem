@@ -53,11 +53,11 @@ angular.module('issueTrackingSystem.home', [])
                         $scope.pagination = {
                             currentPage: 1
                         };
-                        
-                        projects.getAllProjectsForUser(identity.getCurrentUser().Id)
+                    });
+                    
+                projects.getAllProjectsForUser(identity.getCurrentUser().Id)
                             .then(function(projects){
                                 $scope.projects = projects.Projects;
                             });
-                    });
             }
         }])

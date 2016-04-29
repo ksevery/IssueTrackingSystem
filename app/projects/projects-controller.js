@@ -4,7 +4,7 @@ angular.module('issueTrackingSystem.projects', [])
             resolve: {
                 access: ['$location', 'identity', 'Notification', function ($location, identity, Notification) {
                     if (!identity.isAuthenticated() || !identity.getCurrentUser().isAdmin) {
-                        Notification.error('Only logged in users allowed!');
+                        Notification.error('Only administrators allowed!');
                         $location.path('/');
                     }
                 }],
@@ -27,11 +27,11 @@ angular.module('issueTrackingSystem.projects', [])
                         }, function () {
                             $location.path('/');
                         })
-                }]
-            }
-        })
+                    }]
+                }
+            })
             .when('/projects/:id', {
-                controller: 'projectController',
+                controller: 'ProjectController',
                 templateUrl: 'app/projects/single-project.html',
                 resolve: {
                     access: ['$location', 'identity', 'Notification', function ($location, identity, Notification) {
@@ -41,9 +41,53 @@ angular.module('issueTrackingSystem.projects', [])
                         }
                     }]
                 }
+            })
+            .when('/projects', {
+                controller: 'ProjectsController',
+                templateUrl: 'app/projects/projects.html',
+                resolve: {
+                    access: ['$location', 'identity', 'Notification', function ($location, identity, Notification) {
+                        if (!identity.isAuthenticated() || !identity.getCurrentUser().isAdmin) {
+                            Notification.error('Only administrators allowed!');
+                            $location.path('/');
+                        }
+                    }]
+                }
+            })
+            .when('/projects/:id/add-issue', {
+                resolve: {
+                    access: ['$location', '$routeParams', 'identity', 'Notification', 'projects', function ($location, $routeParams, identity, Notification, projects) {
+                        if (!identity.isAuthenticated()) {
+                            Notification.error('Only project lead or an administrator allowed!');
+                            $location.path('/');
+                        }
+                        
+                        var project = projects.getProject($routeParams.id)
+                            .then(function(project){
+                                var currentUser = identity.getCurrentUser();
+                                if(currentUser.Id !== project.Lead.Id || !currentUser.isAdmin){
+                                    Notification.error('Only project lead or an administrator allowed!');
+                                    $location.path('/');
+                                }
+                            });
+                    }],
+                    showModal: ['$uibModal', '$location', 'Notification', 'projects', function($uibModal, $location, Notification, projects){
+                        var modalInstance = $uibModal.open({
+                            animation: true,
+                            templateUrl: 'app/projects/project-add-issue-modal.html',
+                            controller: 'ProjectAddIssueModalController'
+                        });
+                        
+                        modalInstance.result.then(function(){
+                            $location.path('/');
+                        }, function(){
+                            $location.path('/');
+                        })
+                    }]
+                }
             });
     }])
-    .controller('projectController', [
+    .controller('ProjectController', [
         '$scope',
         '$routeParams',
         'projects',
@@ -134,5 +178,39 @@ angular.module('issueTrackingSystem.projects', [])
                 
                 return true;
             }
+        }
+    ])
+    .controller('ProjectsController', [
+        '$scope',
+        '$location',
+        'projects',
+        function($scope, $location, projects){
+            $scope.goToProject = function (projectId) {
+                $location.path('/projects/' + projectId);
+            };
+            
+            $scope.pageChanged = function() {
+                projects.getAllProjects(null, $scope.pagination.currentPage)
+                    .then(function (data) {
+                        $scope.allProjects = data.Projects;
+                    });
+            };
+            
+            projects.getAllProjects()
+                .then(function(data){
+                    $scope.allProjects = data.Projects;
+                    $scope.totalItems = data.TotalCount;
+                        $scope.maxSize = data.Projects.length;
+                        $scope.pagination = {
+                            currentPage: 1
+                        };
+                })
+        }
+    ])
+    .controller('ProjectAddIssueModalController', [
+        '$scope',
+        '$uibModalInstance',
+        function($scope, $uibModalInstance){
+            
         }
     ])
