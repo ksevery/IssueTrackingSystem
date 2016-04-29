@@ -4,8 +4,8 @@ angular.module('issueTrackingSystem.issuesService', [])
         '$q',
         'BASE_URL',
         'BASE_PAGE_SIZE',
-        'projectSessionStorage',
-        function($http, $q, BASE_URL, BASE_PAGE_SIZE, projectSessionStorage){
+        'projectLocalStorage',
+        function($http, $q, BASE_URL, BASE_PAGE_SIZE, projectLocalStorage){
             function getCurrentUserIssues(pageSize, pageNumber, orderBy){
                 pageSize = parseInt(pageSize || BASE_PAGE_SIZE);
                 pageNumber = parseInt(pageNumber || 1);
@@ -17,7 +17,7 @@ angular.module('issueTrackingSystem.issuesService', [])
                 
                 $http.get(url, {
                         headers: {
-                            Authorization: 'Bearer ' + projectSessionStorage.get('access-token')
+                            Authorization: 'Bearer ' + projectLocalStorage.get('access-token')
                         }
                     })
                     .then(function(response){

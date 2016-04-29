@@ -3,9 +3,9 @@ angular.module('issueTrackingSystem.users.authentication', [])
         '$http',
         '$q',
         'BASE_URL',
-        'projectSessionStorage',
+        'projectLocalStorage',
         'identity',
-        function ($http, $q, BASE_URL, projectSessionStorage, identity) {
+        function ($http, $q, BASE_URL, projectLocalStorage, identity) {
             function registerUser(userRegisterData) {
                 var deferred = $q.defer();
 
@@ -22,12 +22,11 @@ angular.module('issueTrackingSystem.users.authentication', [])
 
                 $http.post(BASE_URL + 'api/Token', userLoginData)
                     .then(function (response) {
-                        deferred.resolve(response.data);
-                    })
-                    .then(function(){
+                        projectLocalStorage.addOrUpdate('access-token', response.data.access_token);
                         getUser()
                             .then(function(user){
-                                projectSessionStorage.addOrUpdate('current-user', JSON.stringify(user));                               
+                                projectLocalStorage.addOrUpdate('current-user', JSON.stringify(user));  
+                                deferred.resolve(response.data);                            
                             })
                     });
 
@@ -65,8 +64,8 @@ angular.module('issueTrackingSystem.users.authentication', [])
             }
 
             function logout() {
-                projectSessionStorage.deleteItem('access-token');
-                projectSessionStorage.deleteItem('currentUser');            
+                projectLocalStorage.deleteItem('access-token');
+                projectLocalStorage.deleteItem('current-user');            
             }
 
             return {

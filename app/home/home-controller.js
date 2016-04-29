@@ -10,14 +10,13 @@ angular.module('issueTrackingSystem.home', [])
         'identity',
         'authentication',
         'issues',
-        'projectSessionStorage',
-        function ($scope, identity, authentication, issues, projectSessionStorage) {
+        'projects',
+        function ($scope, identity, authentication, issues, projects) {
             $scope.loginUser = function (user) {
                 var loginUser = 'grant_type=password&Username=' + user.Username + '&Password=' + user.Password;
 
                 authentication.loginUser(loginUser)
                     .then(function (data) {
-                        projectSessionStorage.addOrUpdate('access-token', data.access_token);
                         initProjectsAndIssues();
                     });
             };
@@ -38,13 +37,6 @@ angular.module('issueTrackingSystem.home', [])
                 issues.getCurrentUserIssues(null, $scope.pagination.currentPage)
                     .then(function (data) {
                         $scope.userIssues = data.Issues;
-                        var projects = {};
-                        for(var issue in data.Issues){
-                            var projectId = data.Issues[issue].Project.Id;
-                            projects[projectId] = data.Issues[issue].Project;
-                        }
-                        
-                        $scope.projects = projects;
                     });
             };
 
@@ -62,13 +54,10 @@ angular.module('issueTrackingSystem.home', [])
                             currentPage: 1
                         };
                         
-                        var projects = {};
-                        for(var issue in data.Issues){
-                            var projectId = data.Issues[issue].Project.Id;
-                            projects[projectId] = data.Issues[issue].Project;
-                        }
-                        
-                        $scope.projects = projects;
+                        projects.getAllProjectsForUser(identity.getCurrentUser().Id)
+                            .then(function(projects){
+                                $scope.projects = projects.Projects;
+                            });
                     });
             }
         }])

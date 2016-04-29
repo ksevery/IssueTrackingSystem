@@ -1,16 +1,16 @@
-angular.module('issueTrackingSystem.common.sessionStorage', [])
-    .factory('projectSessionStorage', [
+angular.module('issueTrackingSystem.common.localStorage', [])
+    .factory('projectLocalStorage', [
         function () {
             function get(key) {
-                return sessionStorage[key];
+                return localStorage[key];
             }
             
             function addOrUpdate(key, value) {
-                sessionStorage[key] = value;
+                localStorage[key] = value;
             }
             
             function deleteItem(key){
-                delete sessionStorage[key];
+                delete localStorage[key];
             }
             
             return {

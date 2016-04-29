@@ -1,9 +1,9 @@
 angular.module('issueTrackingSystem.users.identity', [])
     .factory('identity', [
-        'projectSessionStorage',
-        function (projectSessionStorage) {
+        'projectLocalStorage',
+        function (projectLocalStorage) {
             function isAuthenticated() {
-                if(projectSessionStorage.get('access-token')){
+                if(projectLocalStorage.get('access-token')){
                     return true;
                 }
                 
@@ -11,14 +11,28 @@ angular.module('issueTrackingSystem.users.identity', [])
             }
             
             function getAccessToken() {
-                return projectSessionStorage.get('access-token');
+                return projectLocalStorage.get('access-token');
+            }
+            
+            function getAuthorizationHeaders(){
+                return {
+                    headers: {
+                        Authorization: 'Bearer ' + getAccessToken()
+                    }
+                }
             }
             
             return {
                 isAuthenticated: isAuthenticated,
                 getAccessToken: getAccessToken,
+                getAuthorizationHeaders: getAuthorizationHeaders,
                 getCurrentUser: function(){
-                    return JSON.parse(projectSessionStorage.get('current-user'));
+                    var currentUser = projectLocalStorage.get('current-user');
+                    if(currentUser){
+                        return JSON.parse(currentUser);
+                    }
+                    
+                    return currentUser;
                 }
             }
         }])

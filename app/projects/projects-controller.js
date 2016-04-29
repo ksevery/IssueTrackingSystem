@@ -52,14 +52,11 @@ angular.module('issueTrackingSystem.projects', [])
             projects.getProject($routeParams.id)
                 .then(function (data) {
                     $scope.project = data;
-                    console.log(data);
                     $scope.isProjectLead = checkProjectLead();
-                    console.log(identity.getCurrentUser());
                 });
 
             projects.getProjectIssues($routeParams.id)
                 .then(function (data) {
-                    console.log(data);
                     $scope.projectIssues = data;
                 });
 

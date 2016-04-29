@@ -3,8 +3,9 @@ angular.module('issueTrackingSystem.projects.projectsService', [])
         '$http',
         '$q',
         'BASE_URL',
+        'PROJECTS_MAX_COUNT',
         'identity',
-        function ($http, $q, BASE_URL, identity) {
+        function ($http, $q, BASE_URL, PROJECTS_MAX_COUNT, identity) {
             function getProject(projectId) {
                 var deferred = $q.defer();
 
@@ -55,11 +56,26 @@ angular.module('issueTrackingSystem.projects.projectsService', [])
                 
                 return deferred.promise;
             }
+            
+            function getAllProjectsForUser(userId, pageSize, pageNumber) {
+                pageSize = pageSize || PROJECTS_MAX_COUNT;
+                pageNumber = pageNumber || 1;
+                var deferred = $q.defer();
+                $http.get(BASE_URL + 'projects?filter=Issues.Any(Assignee.Id=="' + userId + '")||LeadId=="' + userId + '"&pageSize=' + pageSize + '&pageNumber=' + pageNumber, identity.getAuthorizationHeaders())
+                    .then(function (response) {
+                        deferred.resolve(response.data);
+                    }, function(error){
+                        deferred.reject(error);
+                    });
+                
+                return deferred.promise;
+            }
 
             return {
                 getProject: getProject,
                 getProjectIssues: getProjectIssues,
-                createNewProject: createNewProject
+                createNewProject: createNewProject,
+                getAllProjectsForUser: getAllProjectsForUser
             }
         }
     ])

@@ -9,7 +9,7 @@ angular.module('issueTrackingSystem', [
   'ui-notification',
   'issueTrackingSystem.home',
   'issueTrackingSystem.common.main',
-  'issueTrackingSystem.common.sessionStorage',
+  'issueTrackingSystem.common.localStorage',
   'issueTrackingSystem.users.authentication',
   'issueTrackingSystem.users.identity',
   'issueTrackingSystem.users.userService',
@@ -25,4 +25,5 @@ config(['$routeProvider', function($routeProvider) {
 }])
 .constant('BASE_URL', 'http://softuni-issue-tracker.azurewebsites.net/')
 .constant('BASE_PAGE_SIZE', 10)
-.constant('EMAIL_VALIDATOR', /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i);
+.constant('EMAIL_VALIDATOR', /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i)
+.constant('PROJECTS_MAX_COUNT', 100);
