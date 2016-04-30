@@ -16,6 +16,7 @@ angular.module('issueTrackingSystem', [
   'issueTrackingSystem.users.changePassword',
   'issueTrackingSystem.users.logout',
   'issueTrackingSystem.issuesService',
+  'issueTrackingSystem.issues',
   'issueTrackingSystem.projects',
   'issueTrackingSystem.projects.projectsService',
   'issueTrackingSystem.labels.service'

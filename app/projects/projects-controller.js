@@ -56,13 +56,13 @@ angular.module('issueTrackingSystem.projects', [])
             })
             .when('/projects/:id/add-issue', {
                 resolve: {
-                    access: ['$location', '$routeParams', 'identity', 'Notification', 'projects', function ($location, $routeParams, identity, Notification, projects) {
+                    access: ['$location', '$route', 'identity', 'Notification', 'projects', function ($location, $route, identity, Notification, projects) {
                         if (!identity.isAuthenticated()) {
                             Notification.error('Only project lead or an administrator allowed!');
                             $location.path('/');
                         }
                         
-                        var project = projects.getProject($routeParams.id)
+                        var project = projects.getProject($route.current.params.id)
                             .then(function(project){
                                 var currentUser = identity.getCurrentUser();
                                 if(currentUser.Id !== project.Lead.Id || !currentUser.isAdmin){
@@ -71,15 +71,22 @@ angular.module('issueTrackingSystem.projects', [])
                                 }
                             });
                     }],
-                    showModal: ['$uibModal', '$location', 'Notification', 'projects', function($uibModal, $location, Notification, projects){
+                    showModal: ['$uibModal', '$location', 'Notification', 'projects', 'issues', function($uibModal, $location, Notification, projects, issues){
                         var modalInstance = $uibModal.open({
                             animation: true,
                             templateUrl: 'app/projects/project-add-issue-modal.html',
                             controller: 'ProjectAddIssueModalController'
                         });
                         
-                        modalInstance.result.then(function(){
-                            $location.path('/');
+                        modalInstance.result.then(function(newIssue){
+                            issues.addIssue(newIssue)
+                                .then(function(issue){
+                                    $location.path('/issues/' + issue.Id);
+                                }, function(error){
+                                    console.log(error);
+                                    Notification.error(error.data.message);
+                                    $location.path('/');
+                                });
                         }, function(){
                             $location.path('/');
                         })
@@ -113,73 +120,6 @@ angular.module('issueTrackingSystem.projects', [])
             }
         }
     ])
-    .controller('ProjectAddModalController', [
-        '$scope',
-        '$uibModalInstance',
-        'users',
-        'labels',
-        'EMAIL_VALIDATOR',
-        function ($scope, $uibModalInstance, users, labels, EMAIL_VALIDATOR) {
-            $scope.selectedLabels = [];
-            $scope.selectedPriorities = [];
-            
-            $scope.ok = function () {
-                $scope.newProject.LeadId = $scope.selectedUser.Id;
-                var name = $scope.newProject.Name;
-                var letters = name.match(/\b(\w)/g);
-                var projectKey = letters.join('');
-                $scope.newProject.ProjectKey = projectKey;
-                if($scope.selectedLabels.length > 0){
-                       $scope.newProject.Labels = $scope.selectedLabels.map(function(item){
-                           return { Name: item.Name };
-                       });
-                }
-                
-                
-                
-                $scope.newProject.Priorities = $scope.selectedPriorities;
-                
-                $uibModalInstance.close($scope.newProject);
-            };
-
-            $scope.cancel = function () {
-                $uibModalInstance.dismiss('cancel');
-            }
-
-            $scope.searchUsers = function (searchUser) {
-                return users.getUsersByQuery('Username.Contains("' + searchUser + '")');
-            }
-
-            $scope.transformChip = function (chip) {
-                // If it is an object, it's already a known chip
-                if (angular.isObject(chip)) {
-                    return chip;
-                }
-                // Otherwise, create a new one
-                return { Name: chip }
-            }
-            
-            $scope.searchLabels = function(searchLabel){
-                return labels.getLabelsByName(searchLabel);
-            }
-            
-            $scope.validateMdElements = function(){
-                var priorities = $scope.selectedPriorities;
-                var user = $scope.selectedUser;
-                
-                if(priorities.length <= 0){
-                    return false;
-                }
-                
-                if(!user || !user.Username.match(EMAIL_VALIDATOR)){
-                    return false;
-                }
-                
-                
-                return true;
-            }
-        }
-    ])
     .controller('ProjectsController', [
         '$scope',
         '$location',
@@ -207,10 +147,138 @@ angular.module('issueTrackingSystem.projects', [])
                 })
         }
     ])
+    .controller('ProjectAddModalController', [
+        '$scope',
+        '$uibModalInstance',
+        'users',
+        'labels',
+        'EMAIL_VALIDATOR',
+        function ($scope, $uibModalInstance, users, labels, EMAIL_VALIDATOR) {
+            $scope.selectedLabels = [];
+            $scope.selectedPriorities = [];
+            
+            $scope.ok = function () {
+                $scope.newProject.LeadId = $scope.selectedUser.Id;
+                var name = $scope.newProject.Name;
+                var letters = name.match(/\b(\w)/g);
+                var projectKey = letters.join('');
+                $scope.newProject.ProjectKey = projectKey;
+                if($scope.selectedLabels.length > 0){
+                       $scope.newProject.Labels = $scope.selectedLabels.map(function(item){
+                           return { Name: item.Name };
+                       });
+                }
+                
+                $scope.newProject.Priorities = $scope.selectedPriorities;
+                
+                $uibModalInstance.close($scope.newProject);
+            };
+
+            $scope.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+            };
+
+            $scope.searchUsers = function (searchUser) {
+                return users.getUsersByQuery('Username.Contains("' + searchUser + '")');
+            }
+
+            $scope.transformChip = function (chip) {
+                // If it is an object, it's already a known chip
+                if (angular.isObject(chip)) {
+                    return chip;
+                }
+                // Otherwise, create a new one
+                return { Name: chip }
+            };
+            
+            $scope.searchLabels = function(searchLabel){
+                return labels.getLabelsByName(searchLabel);
+            };
+            
+            $scope.validateMdElements = function(){
+                var priorities = $scope.selectedPriorities;
+                var user = $scope.selectedUser;
+                
+                if(priorities.length <= 0){
+                    return false;
+                }
+                
+                if(!user || !user.Username.match(EMAIL_VALIDATOR)){
+                    return false;
+                }
+                
+                
+                return true;
+            };
+        }
+    ])
     .controller('ProjectAddIssueModalController', [
         '$scope',
         '$uibModalInstance',
-        function($scope, $uibModalInstance){
+        '$routeParams',
+        'issues',
+        'projects',
+        'labels',
+        'users',
+        'EMAIL_VALIDATOR',
+        function($scope, $uibModalInstance, $routeParams, issues, projects, labels, users, EMAIL_VALIDATOR){
+            $scope.selectedLabels = [];
+            $scope.datePopup = {
+                isOpen: false
+            };
             
+            $scope.ok = function () {
+                $scope.newIssue.ProjectId = $routeParams.id;
+                if($scope.selectedLabels.length > 0){
+                       $scope.newIssue.Labels = $scope.selectedLabels.map(function(item){
+                           return { Name: item.Name };
+                       });
+                }
+                
+                $scope.newIssue.AssigneeId = $scope.selectedUser.Id;
+                
+                $uibModalInstance.close($scope.newIssue);
+            };
+            
+            $scope.cancel = function () {
+                $uibModalInstance.dismiss('cancel');
+            };
+            
+            $scope.searchUsers = function (searchUser) {
+                return users.getUsersByQuery('Username.Contains("' + searchUser + '")');
+            }
+            
+            $scope.searchLabels = function(searchLabel){
+                return labels.getLabelsByName(searchLabel);
+            };
+            
+            $scope.openPopup = function(){
+                $scope.datePopup.isOpen = true;
+            };
+            
+            $scope.transformChip = function (chip) {
+                // If it is an object, it's already a known chip
+                if (angular.isObject(chip)) {
+                    return chip;
+                }
+                // Otherwise, create a new one
+                return { Name: chip }
+            };
+            
+            $scope.validateMdElements = function(){
+                var user = $scope.selectedUser;
+                
+                if(!user || !user.Username.match(EMAIL_VALIDATOR)){
+                    return false;
+                }
+                
+                
+                return true;
+            };
+            
+            projects.getProject($routeParams.id)
+            .then(function(project){
+                $scope.priorities = project.Priorities;
+            });
         }
     ])

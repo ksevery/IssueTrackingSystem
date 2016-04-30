@@ -4,8 +4,8 @@ angular.module('issueTrackingSystem.issuesService', [])
         '$q',
         'BASE_URL',
         'BASE_PAGE_SIZE',
-        'projectLocalStorage',
-        function($http, $q, BASE_URL, BASE_PAGE_SIZE, projectLocalStorage){
+        'identity',
+        function($http, $q, BASE_URL, BASE_PAGE_SIZE, identity){
             function getCurrentUserIssues(pageSize, pageNumber, orderBy){
                 pageSize = parseInt(pageSize || BASE_PAGE_SIZE);
                 pageNumber = parseInt(pageNumber || 1);
@@ -15,11 +15,7 @@ angular.module('issueTrackingSystem.issuesService', [])
                 
                 var deferred = $q.defer();
                 
-                $http.get(url, {
-                        headers: {
-                            Authorization: 'Bearer ' + projectLocalStorage.get('access-token')
-                        }
-                    })
+                $http.get(url, identity.getAuthorizationHeaders())
                     .then(function(response){
                         deferred.resolve(response.data);
                     })
@@ -27,12 +23,39 @@ angular.module('issueTrackingSystem.issuesService', [])
                 return deferred.promise;
             }
             
-            function getIssues(pageSize, pageNumber, filter) {
+            function addIssue(issue) {
+                var deferred = $q.defer();
                 
+                var url = BASE_URL + 'issues';
+                
+                $http.post(url, issue, identity.getAuthorizationHeaders())
+                    .then(function(response){
+                        deferred.resolve(response.data);
+                    }, function(error){
+                        deferred.reject(error);
+                    });
+                
+                return deferred.promise;
+            }
+            
+            function getIssueById(issueId){
+                var deferred = $q.defer();
+                
+                var url = BASE_URL + 'issues/' + issueId;
+                
+                $http.get(url, identity.getAuthorizationHeaders())
+                    .then(function(response){
+                        deferred.resolve(response.data);
+                    }, function(error){
+                        deferred.reject(error);
+                    });
+                
+                return deferred.promise;
             }
             
             return {
                 getCurrentUserIssues: getCurrentUserIssues,
-                getIssues: getIssues
+                addIssue: addIssue,
+                getIssueById: getIssueById
             }
     }])
