@@ -3,6 +3,11 @@ textarea {
   resize: none;
 }
 
+hr {
+  border-color: black;
+  border-width: 2px;
+}
+
 .border-box{
   border: 1px solid black;
   border-radius: 5px;

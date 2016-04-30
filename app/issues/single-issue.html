@@ -1,3 +1,17 @@
 <div class="row">
-    <h2>Issue page</h2>
+    <h2 class="text-center">Issue page</h2>
+    <div class="col-md-6 col-md-offset-3">
+        <p><strong>Title:</strong> {{issue.Title}}</p>
+        <p><strong>Description:</strong> {{issue.Description}}</p>
+        <p><strong>Due Date:</strong> {{issue.DueDate}}</p>
+        <hr />
+        <p><strong>Author:</strong> {{issue.Author.Username}}</p>
+        <p><strong>Assignee:</strong> {{issue.Assignee.Username}}</p>
+        <hr />
+        <p><strong>Project:</strong> <a href="#/projects/{{issue.Project.Id}}">{{issue.Project.Name}}</a></p>
+        <p><strong>Labels:</strong> <span class="label label-success" ng-repeat="label in issue.Labels">{{label.Name}}</span></p>
+        <p><strong>Priority:</strong> <span class="label label-success">{{issue.Priority.Name}}</span></p>
+        <hr />
+        <p><strong>Status:</strong> <span class="label label-success">{{issue.Status.Name}}</span></p>
+    </div>
 </div>

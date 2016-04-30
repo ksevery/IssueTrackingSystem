@@ -20,7 +20,7 @@ angular.module('issueTrackingSystem.issues', [])
         function($scope, $routeParams, issues){
             issues.getIssueById($routeParams.id)
                 .then(function(issue){
-                    console.log(issue);
+                    $scope.issue = issue;
                 });
         }
     ]);
