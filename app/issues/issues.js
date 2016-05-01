@@ -53,9 +53,25 @@ angular.module('issueTrackingSystem.issuesService', [])
                 return deferred.promise;
             }
             
+            function updateIssue(issueId, issue) {
+                var deferred = $q.defer();
+                
+                var url = BASE_URL + 'issues/' + issueId;
+                
+                $http.put(url, issue, identity.getAuthorizationHeaders())
+                    .then(function(response){
+                        deferred.resolve(response.data);
+                    }, function(error){
+                        deferred.reject(error);
+                    });
+                
+                return deferred.promise;
+            }
+            
             return {
                 getCurrentUserIssues: getCurrentUserIssues,
                 addIssue: addIssue,
-                getIssueById: getIssueById
+                getIssueById: getIssueById,
+                updateIssue: updateIssue
             }
     }])

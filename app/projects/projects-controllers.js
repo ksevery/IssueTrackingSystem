@@ -65,6 +65,7 @@ angular.module('issueTrackingSystem.projects', [])
                         var project = projects.getProject($route.current.params.id)
                             .then(function(project){
                                 var currentUser = identity.getCurrentUser();
+                                // Check if current user is project leader or admin
                                 if(currentUser.Id !== project.Lead.Id || !currentUser.isAdmin){
                                     Notification.error('Only project lead or an administrator allowed!');
                                     $location.path('/');
@@ -277,8 +278,8 @@ angular.module('issueTrackingSystem.projects', [])
             };
             
             projects.getProject($routeParams.id)
-            .then(function(project){
-                $scope.priorities = project.Priorities;
-            });
+                .then(function(project){
+                    $scope.priorities = project.Priorities;
+                });
         }
     ])

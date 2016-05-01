@@ -13,5 +13,7 @@
         <p><strong>Priority:</strong> <span class="label label-success">{{issue.Priority.Name}}</span></p>
         <hr />
         <p><strong>Status:</strong> <span class="label label-success">{{issue.Status.Name}}</span></p>
+        <hr />
+        <p ng-if="isProjectLeader || isAssignee"><a href="#/issues/{{issue.Id}}/edit" class="btn btn-success">Edit Issue</a></p>
     </div>
 </div>

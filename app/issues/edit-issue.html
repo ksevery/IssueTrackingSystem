@@ -1,24 +1,24 @@
-<div class="form-container">
-    <h2>Add Issue</h2>
-    <form name="addIssueForm">
+<div class="row form-container">
+    <h2 class="text-center">Edit Issue page</h2>
+    <form name="editIssueForm" ng-if="isProjectLeader">
         <div class="form-group">
-            <label for="assignee">*Assignee: </label>
-            <md-autocomplete type="email" id="assignee" md-selected-item="selectedUser" md-search-text="searchUser" md-min-length="2" md-items="item in searchUsers(searchUser)" md-item-text="item.Username" placeholder="Start typing a username, autocomplete after 2 letters are typed." required="required">
+            <label for="leader">*Assignee: </label>
+            <md-autocomplete type="email" id="leader" md-selected-item="selectedUser" md-search-text="searchUser" md-min-length="2" md-items="item in searchUsers(searchUser)" md-item-text="item.Username" required placeholder="Start typing a username, autocomplete after 2 letters are typed.">
                 <span>{{item.Username}}</span>
             </md-autocomplete>
         </div>
         <div class="form-group">
             <label for="dueDate">*Due Date: </label>
             <p class="input-group">
-                <input type="text" class="form-control" uib-datepicker-popup="dd-MM-yyyy" ng-model="newIssue.DueDate" ng-required="true" is-open="datePopup.isOpen" close-text="Close" />
+                <input type="text" class="form-control" uib-datepicker-popup="dd-MM-yyyy" ng-model="newValues.dueDate" ng-required="true" is-open="datePopup.isOpen" close-text="Close" />
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" ng-click="openPopup()"><i class="glyphicon glyphicon-calendar"></i></button>
                 </span>
             </p>
         </div>
         <div class="form-group">
-            <label for="priority">*Priority: </label>
-            <select id="priority" class="form-control" ng-model="newIssue.PriorityId" required="required">
+            <label for="priority">Priority: </label>
+            <select id="priority" class="form-control" ng-model="issue.Priority.Id">
                 <option ng-repeat="priority in priorities" value="{{priority.Id}}">{{priority.Name}}</option>
             </select>
         </div>
@@ -38,15 +38,15 @@
         </div>
         <div class="form-group">
             <label for="title">*Title: </label>
-            <input id="title" class="form-control" required="required" type="text" ng-model="newIssue.Title" />
+            <input id="title" class="form-control" type="text" required ng-model="newValues.title" />
         </div>
         <div class="form-group">
             <label for="description">*Description: </label>
-            <textarea id="description" class="form-control" required="required" type="text" ng-model="newIssue.Description" />
+            <textarea id="description" class="form-control" type="text" required ng-model="newValues.description" />
         </div>
         <div class="form-group">
-            <button class="btn btn-success" ng-disabled="addIssueForm.$invalid || !validateMdElements()" ng-click="ok()">Create</button>
+            <button class="btn btn-success" ng-disabled="editIssueForm.$invalid" ng-click="editIssue()">Edit</button>
             <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
         </div>
-    </form>
+    </form> 
 </div>
