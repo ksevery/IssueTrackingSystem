@@ -7,11 +7,12 @@ angular.module('issueTrackingSystem.home', [])
     }])
     .controller('HomeController', [
         '$scope',
+        'Notification',
         'identity',
         'authentication',
         'issues',
         'projects',
-        function ($scope, identity, authentication, issues, projects) {
+        function ($scope, Notification, identity, authentication, issues, projects) {
             $scope.loginUser = function (user) {
                 var loginUser = 'grant_type=password&Username=' + user.Username + '&Password=' + user.Password;
 
@@ -30,6 +31,9 @@ angular.module('issueTrackingSystem.home', [])
                         };
 
                         $scope.loginUser(loginUser);
+                    }, function(error){
+                        console.log(error);
+                        Notification.error(error);
                     });
             };
             

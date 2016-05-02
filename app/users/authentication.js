@@ -12,6 +12,8 @@ angular.module('issueTrackingSystem.users.authentication', [])
                 $http.post(BASE_URL + 'api/Account/Register', userRegisterData)
                     .then(function (response) {
                         deferred.resolve(response.data)
+                    }, function(error){
+                        deferred.reject(error.data);
                     });
 
                 return deferred.promise;

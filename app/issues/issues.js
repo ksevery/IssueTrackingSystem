@@ -83,8 +83,24 @@ angular.module('issueTrackingSystem.issuesService', [])
                 return deferred.promise;
             }
             
+            function getUserIssuesForProject(projectId) {
+                var deferred = $q.defer();
+                var pageSize = 1;
+                var pageNumber = 1;
+                var filter = 'Assignee.Id=="' + identity.getCurrentUser().Id + '" and Project.Id==' + projectId;
+                var url = BASE_URL + 'Issues?pageSize=' + pageSize + '&pageNumber=' + pageNumber + '&filter=' + filter;
+                
+                $http.get(url, identity.getAuthorizationHeaders())
+                    .then(function(response){
+                        deferred.resolve(response.data);
+                    });
+                
+                return deferred.promise;
+            }
+            
             return {
                 getCurrentUserIssues: getCurrentUserIssues,
+                getUserIssuesForProject: getUserIssuesForProject,
                 addIssue: addIssue,
                 getIssueById: getIssueById,
                 updateIssue: updateIssue,

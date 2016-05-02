@@ -5,11 +5,14 @@ angular.module('issueTrackingSystem', [
   'ngRoute',
   'ngCookies',
   'ngMaterial',
+  'ngMessages',
   'ui.bootstrap',
   'ui-notification',
   'issueTrackingSystem.home',
+  'issueTrackingSystem.comments.commentService',
   'issueTrackingSystem.common.main',
   'issueTrackingSystem.common.localStorage',
+  'issueTrackingSystem.common.directives',
   'issueTrackingSystem.users.authentication',
   'issueTrackingSystem.users.identity',
   'issueTrackingSystem.users.userService',
@@ -21,8 +24,16 @@ angular.module('issueTrackingSystem', [
   'issueTrackingSystem.projects.projectsService',
   'issueTrackingSystem.labels.service'
 ]).
-config(['$routeProvider', function($routeProvider) {
+config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
   $routeProvider.otherwise({redirectTo: '/'});
+  
+  $httpProvider.interceptors.push(['$q', function($q){
+    return {
+      responseError: function(rejection){
+        return $q.reject(rejection.data);
+      }
+    }
+  }])
 }])
 .constant('BASE_URL', 'http://softuni-issue-tracker.azurewebsites.net/')
 .constant('BASE_PAGE_SIZE', 10)

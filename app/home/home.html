@@ -28,7 +28,10 @@
             </div>
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password: </label>
-                <input id="confirmPassword" class="form-control" required="required" type="password" ng-model="registerUser.ConfirmPassword" />
+                <input id="confirmPassword" name="confirmPassword" class="form-control" required="required" type="password" ng-model="registerUser.ConfirmPassword" compare-to="registerUser.Password" />
+                <div ng-messages="userRegistrationForm.confirmPassword.$error" class="messages">
+                    <div ng-message="compareTo">Password and confirm password must match!</div>
+                </div>
             </div>
             <div class="form-group center-block">
                 <button ng-click="register(registerUser)" ng-disabled="userRegistrationForm.$invalid" class="btn btn-primary">REGISTER</button>

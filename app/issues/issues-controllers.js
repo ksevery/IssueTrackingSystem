@@ -25,7 +25,7 @@ angular.module('issueTrackingSystem.issues', [])
                         issues.getIssueById($route.current.params.id)
                             .then(function(issue){
                                 var currentUser = identity.getCurrentUser();
-                                if(issue.Assignee.Id !== currentUser.Id || issue.Author.Id !== currentUser.Id){
+                                if(issue.Assignee.Id !== currentUser.Id && issue.Author.Id !== currentUser.Id){
                                     Notification.error('Only project lead or issue assignee allowed!');
                                     $location.path('/');
                                 }
@@ -39,9 +39,15 @@ angular.module('issueTrackingSystem.issues', [])
         '$routeParams',
         'issues',
         'identity',
-        function($scope, $routeParams, issues, identity){
+        'comments',
+        function($scope, $routeParams, issues, identity, comments){
             $scope.isAssignee = false;
             $scope.isProjectLeader = false;
+            $scope.hasIssueInProject = false;
+            $scope.newComment = {
+                Text: null
+            };
+            
             issues.getIssueById($routeParams.id)
                 .then(function(issue){
                     $scope.issue = issue;
@@ -53,7 +59,30 @@ angular.module('issueTrackingSystem.issues', [])
                     if(issue.Author.Id === currentUser.Id){
                         $scope.isProjectLeader = true;
                     }
+                    
+                    issues.getUserIssuesForProject(issue.Project.Id)
+                        .then(function(data){
+                            if(data.Issues.length > 0){
+                                $scope.hasIssueInProject = true;
+                            }
+                        });
                 });
+                
+            $scope.getComments = function() {
+                comments.getCommentsByIssueId($routeParams.id)
+                    .then(function(comments){
+                        $scope.comments = comments.reverse();
+                    });
+            };
+            
+            $scope.getComments();
+                
+            $scope.addComment = function(){
+                comments.addCommentToIssue($routeParams.id, $scope.newComment)
+                    .then(function(){
+                        $scope.getComments();
+                    });
+            };
         }
     ])
     .controller('EditIssueController', [
@@ -149,14 +178,20 @@ angular.module('issueTrackingSystem.issues', [])
                 }
                 
                 if($scope.newValues.status){
-                    issues.updateIssueStatus($routeParams.id, $scope.newValues.status);
+                    issues.updateIssueStatus($routeParams.id, $scope.newValues.status)
+                        .then(function(data){
+                            Notification.success('Changed status successfuly!');
+                            $location.path('/issues/' + $routeParams.id);
+                        });
                 }
                 
-                issues.updateIssue($routeParams.id, editedIssue)
-                    .then(function(data){
-                        Notification.success('Edited issue successfuly!');
-                        $location.path('/issues/' + $routeParams.id);
-                    });
+                if($scope.issue.Author.Id === identity.getCurrentUser().Id){
+                    issues.updateIssue($routeParams.id, editedIssue)
+                        .then(function(data){
+                            Notification.success('Edited issue successfuly!');
+                            $location.path('/issues/' + $routeParams.id);
+                        });
+                }
             };
             
             $scope.cancel = function(){

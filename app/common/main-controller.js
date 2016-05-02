@@ -17,7 +17,9 @@ angular.module('issueTrackingSystem.common.main', [])
                 }
                 
                 return false;
-            }
+            };
+            
+            $scope.user = identity.getCurrentUser();
             
             $scope.logout = function(){
                 authentication.logout();

@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="app/app.css">
   <script src="app/bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
 </head>
-<body ng-controller="MainController">
+<body ng-controller="MainController" ng-cloak>
   <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -38,20 +38,9 @@
         <li ng-if="isAuthenticated()"><a href="#/profile/password">Change Password</a></li>
         <li ng-if="isAdmin()"><a href="#/projects/add">Add New Project</a></li>
         <li ng-if="isAdmin()"><a href="#/projects">All Projects</a></li>
-        <!--<li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-            <li class="divider"></li>
-            <li><a href="#">One more separated link</a></li>
-          </ul>
-        </li>-->
       </ul>
       <ul ng-if="isAuthenticated()" class="nav navbar-nav navbar-right">
+        <li><a href="#/">{{user.Username}}</a></li>
         <li><a href="#/logout">Logout</a></li>
       </ul>
     </div>
@@ -75,12 +64,16 @@
   <script src="app/bower_components/angular-cookies/angular-cookies.js"></script>  
   <script src="app/bower_components/angular-aria/angular-aria.js"></script>
   <script src="app/bower_components/angular-animate/angular-animate.js"></script>
+  <script src="app/bower_components/angular-messages/angular-messages.js"></script>
   <script src="app/bower_components/angular-material/angular-material.js"></script>
   <script src="app/bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
   <script src="app/bower_components/angular-ui-notification/dist/angular-ui-notification.min.js"></script>
   
   <script src="app/common/main-controller.js"></script>
   <script src="app/common/project-storage.js"></script>
+  <script src="app/common/directives.js"></script>
+  
+  <script src="app/comments/comments.js"></script>
   
   <script src="app/home/home-controller.js"></script>
   
