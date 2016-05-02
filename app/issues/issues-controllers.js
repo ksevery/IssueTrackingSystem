@@ -69,6 +69,7 @@ angular.module('issueTrackingSystem.issues', [])
         'projects',
         function($scope, $routeParams, $window, $location, Notification, identity, issues, users, labels, projects){
             $scope.isProjectLeader = false;
+            $scope.isAssignee = false;
             $scope.selectedLabels = [];
             $scope.datePopup = {
                 isOpen: false
@@ -77,13 +78,15 @@ angular.module('issueTrackingSystem.issues', [])
             $scope.newValues = {
                 dueDate: null,
                 title: null,
-                description: null
+                description: null,
+                status: null,
+                selectedUser: null
             };
             
             issues.getIssueById($routeParams.id)
                 .then(function(issue){
                     $scope.issue = issue;
-                    projects.getProject($scope.issue.Project.Id)
+                    projects.getProjectById($scope.issue.Project.Id)
                         .then(function(project){
                             $scope.priorities = project.Priorities;
                         });
@@ -92,7 +95,11 @@ angular.module('issueTrackingSystem.issues', [])
                         $scope.isProjectLeader = true;
                     }
                     
-                    $scope.selectedUser = issue.Assignee;
+                    if(issue.Assignee.Id === currentUser.Id){
+                        $scope.isAssignee = true;
+                    }
+                    
+                    $scope.newValues.selectedUser = issue.Assignee;
                     $scope.newValues.dueDate = new Date(issue.DueDate);
                     $scope.selectedLabels = issue.Labels;
                     $scope.newValues.title = issue.Title;
@@ -139,6 +146,10 @@ angular.module('issueTrackingSystem.issues', [])
                 
                 if($scope.selectedUser){
                     editedIssue.AssigneeId = $scope.selectedUser.Id;
+                }
+                
+                if($scope.newValues.status){
+                    issues.updateIssueStatus($routeParams.id, $scope.newValues.status);
                 }
                 
                 issues.updateIssue($routeParams.id, editedIssue)

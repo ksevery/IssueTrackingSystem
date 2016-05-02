@@ -2,8 +2,8 @@
     <h2 class="text-center">Edit Issue page</h2>
     <form name="editIssueForm" ng-if="isProjectLeader">
         <div class="form-group">
-            <label for="leader">*Assignee: </label>
-            <md-autocomplete type="email" id="leader" md-selected-item="selectedUser" md-search-text="searchUser" md-min-length="2" md-items="item in searchUsers(searchUser)" md-item-text="item.Username" required placeholder="Start typing a username, autocomplete after 2 letters are typed.">
+            <label for="assignee">*Assignee: </label>
+            <md-autocomplete id="assignee" md-selected-item="newValues.selectedUser" md-search-text="searchUser" md-min-length="2" md-items="item in searchUsers(searchUser)" md-item-text="item.Username" required placeholder="Start typing a username, autocomplete after 2 letters are typed.">
                 <span>{{item.Username}}</span>
             </md-autocomplete>
         </div>
@@ -44,9 +44,17 @@
             <label for="description">*Description: </label>
             <textarea id="description" class="form-control" type="text" required ng-model="newValues.description" />
         </div>
-        <div class="form-group">
-            <button class="btn btn-success" ng-disabled="editIssueForm.$invalid" ng-click="editIssue()">Edit</button>
-            <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
-        </div>
     </form> 
+    <div ng-if="isAssignee || isProjectLeader" class="form-group">
+        <label for="status">Status: </label>
+        <select id="status" class="form-control" ng-model="newValues.status">
+            <option selected value> -- select a status -- </option>
+            <option ng-repeat="status in issue.AvailableStatuses" value="{{status.Id}}">{{status.Name}}</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <button class="btn btn-success" ng-disabled="editIssueForm.$invalid" ng-click="editIssue()">Edit</button>
+        <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+    </div>
+    
 </div>

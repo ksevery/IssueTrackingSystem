@@ -62,11 +62,11 @@ angular.module('issueTrackingSystem.projects', [])
                             $location.path('/');
                         }
                         
-                        var project = projects.getProject($route.current.params.id)
+                        var project = projects.getProjectById($route.current.params.id)
                             .then(function(project){
                                 var currentUser = identity.getCurrentUser();
                                 // Check if current user is project leader or admin
-                                if(currentUser.Id !== project.Lead.Id || !currentUser.isAdmin){
+                                if(currentUser.Id !== project.Lead.Id && !currentUser.isAdmin){
                                     Notification.error('Only project lead or an administrator allowed!');
                                     $location.path('/');
                                 }
@@ -93,6 +93,28 @@ angular.module('issueTrackingSystem.projects', [])
                         })
                     }]
                 }
+            })
+            .when('/projects/:id/edit', {
+                controller: 'EditProjectController',
+                templateUrl: 'app/projects/edit-project.html',
+                resolve: {
+                    access: ['$location', '$route', 'identity', 'Notification', 'projects', function ($location, $route, identity, Notification, projects) {
+                        if (!identity.isAuthenticated()) {
+                            Notification.error('Only project lead or an administrator allowed!');
+                            $location.path('/');
+                        }
+                        
+                        var project = projects.getProjectById($route.current.params.id)
+                            .then(function(project){
+                                var currentUser = identity.getCurrentUser();
+                                // Check if current user is project leader or admin
+                                if(currentUser.Id !== project.Lead.Id && !currentUser.isAdmin){
+                                    Notification.error('Only project lead or an administrator allowed!');
+                                    $location.path('/');
+                                }
+                            });
+                    }]
+                }
             });
     }])
     .controller('ProjectController', [
@@ -101,7 +123,7 @@ angular.module('issueTrackingSystem.projects', [])
         'projects',
         'identity',
         function ($scope, $routeParams, projects, identity) {
-            projects.getProject($routeParams.id)
+            projects.getProjectById($routeParams.id)
                 .then(function (data) {
                     $scope.project = data;
                     $scope.isProjectLead = checkProjectLead();
@@ -181,7 +203,7 @@ angular.module('issueTrackingSystem.projects', [])
 
             $scope.searchUsers = function (searchUser) {
                 return users.getUsersByQuery('Username.Contains("' + searchUser + '")');
-            }
+            };
 
             $scope.transformChip = function (chip) {
                 // If it is an object, it's already a known chip
@@ -273,13 +295,111 @@ angular.module('issueTrackingSystem.projects', [])
                     return false;
                 }
                 
+                return true;
+            };
+            
+            projects.getProjectById($routeParams.id)
+                .then(function(project){
+                    $scope.priorities = project.Priorities;
+                });
+        }
+    ])
+    .controller('EditProjectController', [
+        '$scope',
+        '$location',
+        '$routeParams',
+        '$window',
+        'Notification',
+        'identity',
+        'projects',
+        'labels',
+        'users',
+        'EMAIL_VALIDATOR',
+        function($scope, $location, $routeParams, $window, Notification, identity, projects, labels, users, EMAIL_VALIDATOR){
+            $scope.isProjectLeader = false;
+            $scope.selectedLabels = [];
+            $scope.selectedPriorities = [];
+            
+            $scope.newValues = {
+                name: null,
+                description: null,
+                selectedUser: null
+            };
+            
+            projects.getProjectById($routeParams.id)
+                .then(function(project){
+                    $scope.project = project;
+                    $scope.newValues.name = project.Name;
+                    $scope.newValues.description = project.Description;
+                    $scope.selectedLabels = project.Labels;
+                    $scope.selectedPriorities = project.Priorities;
+                    $scope.newValues.selectedUser = project.Lead;
+                    
+                    var currentUser = identity.getCurrentUser();
+                    if(currentUser.Id == project.Lead.Id){
+                        $scope.isProjectLeader = true;
+                    }
+                });
+                
+            $scope.searchUsers = function (searchUser) {
+                return users.getUsersByQuery('Username.Contains("' + searchUser + '")');
+            };
+
+            $scope.transformChip = function (chip) {
+                // If it is an object, it's already a known chip
+                if (angular.isObject(chip)) {
+                    return chip;
+                }
+                // Otherwise, create a new one
+                return { Name: chip }
+            };
+            
+            $scope.searchLabels = function(searchLabel){
+                return labels.getLabelsByName(searchLabel);
+            };
+            
+            $scope.validateMdElements = function(){
+                var user = $scope.selectedUser;
+                var priorities = $scope.selectedPriorities;
+                
+                if(priorities.length <= 0){
+                    return false;
+                }
+                
+                if(!user || !user.Username.match(EMAIL_VALIDATOR)){
+                    return false;
+                }
                 
                 return true;
             };
             
-            projects.getProject($routeParams.id)
-                .then(function(project){
-                    $scope.priorities = project.Priorities;
-                });
+            $scope.editProject = function(){
+                var project = $scope.project;
+                var editedProject = {
+                    Name: $scope.newValues.name || project.Name,
+                    Description: $scope.newValues.description || project.Description,
+                    Priorities: $scope.selectedPriorities || project.Priorities
+                };
+                
+                if($scope.selectedLabels.length > 0){
+                       editedProject.Labels = $scope.selectedLabels.map(function(item){
+                           return { Name: item.Name };
+                       });
+                }
+                
+                if($scope.isAdmin()){
+                    editedProject.LeadId = $scope.newValues.selectedUser.Id || project.Lead.Id;
+                }
+                
+                projects.updateProject($routeParams.id, editedProject)
+                    .then(function(data){
+                        Notification.success('Project edited successfuly!');
+                        $location.path('/projects/' + $routeParams.id);
+                    });
+            };
+            
+            $scope.cancel = function(){
+                $window.history.back();
+            };
         }
     ])
