@@ -39,6 +39,11 @@ hr {
   color: red;
 }
 
+.form-control.no-highlight {
+  border-color: grey;
+  outline-color: grey;
+}
+
 .align-left {
 	float: left;
 }

@@ -22,7 +22,7 @@
     <h3 class="text-center">Comments</h3>
     <form ng-if="isProjectLeader || hasIssueInProject" name="addCommentForm">
         <div class="form-group input-group">
-            <textarea ng-model="newComment.Text" class="form-control custom-control" required rows="5"></textarea> 
+            <textarea ng-model="newComment.Text" class="form-control custom-control no-highlight" required rows="5"></textarea> 
             <span class="input-group-addon btn btn-primary" ng-click="addCommentForm.$invalid || addComment()" ng-disabled="addCommentForm.$invalid">Add Comment</span>
         </div>
     </form>

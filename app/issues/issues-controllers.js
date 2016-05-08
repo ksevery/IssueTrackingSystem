@@ -81,6 +81,7 @@ angular.module('issueTrackingSystem.issues', [])
                 comments.addCommentToIssue($routeParams.id, $scope.newComment)
                     .then(function(){
                         $scope.getComments();
+                        $scope.newComment.Text = null;
                     });
             };
         }
