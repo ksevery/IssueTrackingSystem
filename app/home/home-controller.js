@@ -18,6 +18,7 @@ angular.module('issueTrackingSystem.home', [])
 
                 authentication.loginUser(loginUser)
                     .then(function (data) {
+                        Notification.success('Logged in successfuly!');
                         initProjectsAndIssues();
                     });
             };
